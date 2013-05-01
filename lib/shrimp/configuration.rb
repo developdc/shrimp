@@ -4,7 +4,7 @@ module Shrimp
     attr_accessor :default_options
     attr_writer :phantomjs
 
-    [:format, :margin, :zoom, :orientation, :tmpdir, :rendering_timeout, :rendering_time].each do |m|
+    [:format, :margin, :zoom, :orientation, :tmpdir, :rendering_timeout, :rendering_time, :method, :params, :content].each do |m|
       define_method("#{m}=") do |val|
         @default_options[m]=val
       end
@@ -18,7 +18,10 @@ module Shrimp
           :orientation       => 'portrait',
           :tmpdir            => Dir.tmpdir,
           :rendering_timeout => 90000,
-          :rendering_time    => 1000
+          :rendering_time    => 1000,
+          :method            => "GET",
+          :params            => {},
+          :content           => ''
       }
     end
 
