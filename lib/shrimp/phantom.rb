@@ -58,7 +58,9 @@ module Shrimp
       method, params, content           = options[:method], options[:params], options[:content]
       @outfile                          ||= "#{options[:tmpdir]}/#{Digest::MD5.hexdigest((Time.now.to_i + rand(9001)).to_s)}.pdf"
 
-      [Shrimp.configuration.phantomjs, SCRIPT_FILE, @source.to_s, @outfile, format, zoom, margin, orientation, cookie_file, rendering_time, timeout, method, params.to_json, content].join(" ")
+      path = Tempfile.open('pdf') { |f| f << content }.path if content
+
+      [Shrimp.configuration.phantomjs, SCRIPT_FILE, @source.to_s, @outfile, format, zoom, margin, orientation, cookie_file, rendering_time, timeout, method, params.to_json, path].join(" ")
     end
 
     # Public: initializes a new Phantom Object
