@@ -31,6 +31,7 @@ module Shrimp
     # Returns the stdout output of phantomjs
     def run
       @error  = nil
+      puts cmd
       @result = `#{cmd}`
       unless $?.exitstatus == 0
         @error  = @result
@@ -41,6 +42,7 @@ module Shrimp
 
     def run!
       @error  = nil
+      puts cmd
       @result = `#{cmd}`
       unless $?.exitstatus == 0
         @error  = @result
@@ -56,11 +58,12 @@ module Shrimp
       format, zoom, margin, orientation = options[:format], options[:zoom], options[:margin], options[:orientation]
       rendering_time, timeout           = options[:rendering_time], options[:rendering_timeout]
       method, params, content           = options[:method], options[:params], options[:content]
+      viewport                          = options[:viewport]
       @outfile                          ||= "#{options[:tmpdir]}/#{Digest::MD5.hexdigest((Time.now.to_i + rand(9001)).to_s)}.pdf"
 
       path = Tempfile.open('pdf') { |f| f << content }.path if content
 
-      [Shrimp.configuration.phantomjs, SCRIPT_FILE, @source.to_s, @outfile, format, zoom, margin, orientation, cookie_file, rendering_time, timeout, method, params.to_json, path].join(" ")
+      ([Shrimp.configuration.phantomjs, SCRIPT_FILE] + [@source.to_s, @outfile, format, zoom, margin, orientation, cookie_file, rendering_time, timeout, method, params.to_json, path, viewport].collect { |t| "'#{t.to_s.gsub("'", "\\\\'")}'" }).join(" ")
     end
 
     # Public: initializes a new Phantom Object
